@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "97689262276",
+    "firebase_url": "https://project-cadastro-revavon-default-rtdb.firebaseio.com",
+    "project_id": "project-cadastro-revavon",
+    "storage_bucket": "project-cadastro-revavon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:97689262276:android:d393a6bfb42dbdf6cb1191",
+        "android_client_info": {
+          "package_name": "com.jeancc.cadastro.app_cadastro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "97689262276-3ca7b5r82pe19a06imm8fi85iddls017.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFqWZrzxXeP0NC-_rZqVVh32oPTYzcOKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "97689262276-3ca7b5r82pe19a06imm8fi85iddls017.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "97689262276-brr8pe0phjqt0mvso300ck8vtael974b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.jeancc.cadastro.appCadastro"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
