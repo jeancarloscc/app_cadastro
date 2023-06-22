@@ -1,6 +1,7 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
+import 'package:intl/intl.dart';
 
 import '../models/usuario.dart';
 import '../services/FirebaseDatabaseService.dart';
@@ -9,14 +10,9 @@ class CadastroHome extends StatelessWidget {
   CadastroHome({super.key});
 
   final _cpfController = MaskedTextController(mask: '000.000.000-00');
-  FirebaseDatabase _database = FirebaseDatabase.instance;
+  final _dataNascimentoController = MaskedTextController(mask: '00/00/0000');
+  Usuario usuario = Usuario();
 
-  FirebaseDatabaseService databaseService = FirebaseDatabaseService();
-
-  DatabaseReference ref = FirebaseDatabase.instance.ref("users");
-
-  Usuario? usuario;
-  // Usuario usuario = Usuario();
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +49,8 @@ class CadastroHome extends StatelessWidget {
               TextField(
                 keyboardType: TextInputType.text,
                 obscureText: false,
-                onChanged: (value){
-                  usuario?.nome = value;
+                onChanged: (value) {
+                  usuario.nome = value;
                 },
                 decoration: InputDecoration(
                   labelText: "Nome",
@@ -66,8 +62,8 @@ class CadastroHome extends StatelessWidget {
               TextField(
                 keyboardType: TextInputType.number,
                 obscureText: false,
-                onChanged: (value){
-                  usuario?.num_registro = value as int;
+                onChanged: (value) {
+                  usuario.numRegistro = int.parse(value);
                 },
                 decoration: InputDecoration(
                   labelText: "Registro Avon",
@@ -79,8 +75,8 @@ class CadastroHome extends StatelessWidget {
               TextField(
                 keyboardType: TextInputType.text,
                 obscureText: false,
-                onChanged: (value){
-                  usuario?.senha = value;
+                onChanged: (value) {
+                  usuario.senha = value;
                 },
                 decoration: InputDecoration(
                   labelText: "Senha",
@@ -93,8 +89,8 @@ class CadastroHome extends StatelessWidget {
                 controller: _cpfController,
                 keyboardType: TextInputType.number,
                 obscureText: false,
-                onChanged: (value){
-                  usuario?.cpf = value as int;
+                onChanged: (value) {
+                  usuario.cpf = value;
                 },
                 decoration: InputDecoration(
                   labelText: "CPF",
@@ -106,8 +102,8 @@ class CadastroHome extends StatelessWidget {
               TextField(
                 keyboardType: TextInputType.number,
                 obscureText: false,
-                onChanged: (value){
-                  usuario?.rg = value as int;
+                onChanged: (value) {
+                  usuario.rg = int.parse(value);
                 },
                 decoration: InputDecoration(
                   labelText: "Identidade",
@@ -117,10 +113,11 @@ class CadastroHome extends StatelessWidget {
               ),
               SizedBox(height: 8,),
               TextField(
+                controller: _dataNascimentoController,
                 keyboardType: TextInputType.datetime,
                 obscureText: false,
                 onChanged: (value){
-                  usuario?.data_nascimento = value;
+                  usuario.dataNascimento = value;
                 },
                 decoration: InputDecoration(
                   labelText: "Data de Nascimento",
@@ -131,8 +128,17 @@ class CadastroHome extends StatelessWidget {
               SizedBox(height: 10,),
               FilledButton(
                   onPressed: () {
-                    if (usuario != null){
-                      saveFormData(usuario!);
+                    if (usuario != null) {
+                      Usuario novoUsuario = Usuario(
+                        numRegistro: usuario.numRegistro,
+                        cpf: usuario.cpf,
+                        rg: usuario.rg,
+                        nome: usuario.nome,
+                        senha: usuario.senha,
+                        dataNascimento: usuario.dataNascimento,
+                      );
+                      FirebaseUtils.salvarUsuario(novoUsuario);
+                      // _usuariosRef.push().set(novoUsuario.toMap());
                     }
                   },
                   child: Text("SALVAR"))
@@ -141,21 +147,5 @@ class CadastroHome extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void saveFormData(Usuario usuario) async {
-    try {
-      await databaseService.writeData('users', {
-        'nome': usuario.nome,
-        'registroAvon': usuario.num_registro,
-        'senha': usuario.senha,
-        'cpf': usuario.cpf,
-        'identidade': usuario.rg,
-        'dataNascimento': usuario.data_nascimento,
-      });
-      print('Dados salvos com sucesso!');
-    } catch (error) {
-      print('Erro ao salvar os dados: $error');
-    }
   }
 }

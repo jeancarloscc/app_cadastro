@@ -1,22 +1,15 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/usuario.dart';
 
-class FirebaseDatabaseService {
-  DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+class FirebaseUtils {
+  static FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Future<DataSnapshot> readData(String path) async {
-    DataSnapshot snapshot = (await _databaseReference.child(path).once()) as DataSnapshot;
-    return snapshot;
-  }
-
-  Future<void> writeData(String path, Map<String, dynamic> data) async {
-    await _databaseReference.child(path).set(data);
-  }
-
-  Future<void> updateData(String path, Map<String, dynamic> data) async {
-    await _databaseReference.child(path).update(data);
-  }
-
-  Future<void> deleteData(String path) async {
-    await _databaseReference.child(path).remove();
+  static Future<void> salvarUsuario(Usuario usuario) async {
+    try {
+      DocumentReference docRef = db.collection('usuarios').doc();
+      await docRef.set(usuario.toMap());
+    } catch (e) {
+      print('Erro ao salvar usuário: $e');
+    }
   }
 }
