@@ -1,4 +1,4 @@
-class Usuario {
+class Revendedor {
   int? numRegistro;
   String? cpf;
   int? rg;
@@ -6,7 +6,7 @@ class Usuario {
   String? senha;
   String? dataNascimento;
 
-  Usuario({
+  Revendedor({
     this.numRegistro,
     this.cpf,
     this.rg,
@@ -15,8 +15,8 @@ class Usuario {
     this.dataNascimento,
   });
 
-  factory Usuario.fromMap(Map<String, dynamic> map) {
-    return Usuario(
+  factory Revendedor.fromMap(Map<String, dynamic> map) {
+    return Revendedor(
       numRegistro: map['num_registro'],
       cpf: map['cpf'],
       rg: map['rg'],

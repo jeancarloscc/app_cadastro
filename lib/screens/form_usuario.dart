@@ -1,27 +1,37 @@
 import 'package:cpf_cnpj_validator/cpf_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
-import 'package:intl/intl.dart';
 
-import '../models/usuario.dart';
+import '../models/Revendedor.dart';
 import '../services/FirebaseDatabaseService.dart';
+
 import 'home.dart';
 
-class CadastroHome extends StatelessWidget {
-  CadastroHome({super.key});
+class CadastroReseller extends StatefulWidget {
+  final String adminId;
+  const CadastroReseller({Key? key, required this.adminId}) : super(key: key);
 
+  @override
+  _CadastroResellerState createState() => _CadastroResellerState();
+}
+
+class _CadastroResellerState extends State<CadastroReseller> {
   final _cpfController = MaskedTextController(mask: '000.000.000-00');
   final _dataNascimentoController = MaskedTextController(mask: '00/00/0000');
-  Usuario usuario = Usuario();
-
   final _formKey = GlobalKey<FormState>();
+  late Revendedor _reseller;
+
+  @override
+  void initState() {
+    super.initState();
+    _reseller = Revendedor();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro de Usuáio"),
+        title: Text('Cadastro de Revendedor'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16),
@@ -29,20 +39,8 @@ class CadastroHome extends StatelessWidget {
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                // Container(
-                //   width: 150,
-                //   height: 150,
-                //   decoration: BoxDecoration(
-                //     shape: BoxShape.circle,
-                //     image: DecorationImage(
-                //       image: AssetImage('caminho/para/a/imagem.png'),
-                //       fit: BoxFit.cover,
-                //     ),
-                //   ),
-                // ),
                 CircleAvatar(
                   radius: 60,
                   child: Icon(
@@ -50,157 +48,131 @@ class CadastroHome extends StatelessWidget {
                     size: 75,
                   ),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
+                SizedBox(height: 8),
                 TextFormField(
                   keyboardType: TextInputType.text,
                   obscureText: false,
                   onChanged: (value) {
-                    usuario.nome = value;
+                    _reseller.nome = value;
                   },
                   validator: (value) => validateTextField(value, 'Nome'),
                   decoration: InputDecoration(
-                    labelText: "Nome",
+                    labelText: 'Nome',
                     border: OutlineInputBorder(),
                     icon: Icon(Icons.person),
                   ),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
+                SizedBox(height: 8),
                 TextFormField(
                   keyboardType: TextInputType.number,
                   obscureText: false,
                   onChanged: (value) {
-                    usuario.numRegistro = int.parse(value);
+                    _reseller.numRegistro = int.tryParse(value);
                   },
                   validator: (value) => validateTextField(value, 'NumRegistro'),
+
                   decoration: InputDecoration(
-                    labelText: "Registro Avon",
+                    labelText: 'Registro Avon',
                     border: OutlineInputBorder(),
                     icon: Icon(Icons.assignment_ind_outlined),
                   ),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
+                SizedBox(height: 8),
                 TextFormField(
                   keyboardType: TextInputType.text,
-                  obscureText: false,
+                  obscureText: true,
                   onChanged: (value) {
-                    usuario.senha = value;
+                    _reseller.senha = value;
                   },
                   validator: (value) => validateTextField(value, 'Senha'),
                   decoration: InputDecoration(
-                    labelText: "Senha",
+                    labelText: 'Senha',
                     border: OutlineInputBorder(),
                     icon: Icon(Icons.key_outlined),
                   ),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
+                SizedBox(height: 8),
                 TextFormField(
                   controller: _cpfController,
                   keyboardType: TextInputType.number,
                   obscureText: false,
                   onChanged: (value) {
-                    usuario.cpf = value;
+                    _reseller.cpf = value;
                   },
                   validator: (value) => validateTextField(value, 'CPF'),
                   decoration: InputDecoration(
-                    labelText: "CPF",
+                    labelText: 'CPF',
                     border: OutlineInputBorder(),
                     icon: Icon(Icons.assignment_outlined),
                   ),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
+                SizedBox(height: 8),
                 TextFormField(
                   keyboardType: TextInputType.number,
                   obscureText: false,
                   onChanged: (value) {
-                    usuario.rg = int.parse(value);
+                    _reseller.rg = int.tryParse(value);
                   },
                   validator: (value) => validateTextField(value, 'RG'),
+
                   decoration: InputDecoration(
-                    labelText: "Identidade",
+                    labelText: 'Identidade',
                     border: OutlineInputBorder(),
                     icon: Icon(Icons.badge_outlined),
                   ),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
+                SizedBox(height: 8),
                 TextFormField(
                   controller: _dataNascimentoController,
                   keyboardType: TextInputType.datetime,
                   obscureText: false,
                   onChanged: (value) {
-                    usuario.dataNascimento = value;
+                    _reseller.dataNascimento = value;
                   },
-                  validator: (value) =>
-                      validateTextField(value, 'DataNascimento'),
+                  validator: (value) => validateTextField(value, 'DataNascimento'),
                   decoration: InputDecoration(
-                    labelText: "Data de Nascimento",
+                    labelText: 'Data de Nascimento',
                     border: OutlineInputBorder(),
                     icon: Icon(Icons.cake_outlined),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                FilledButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        Usuario novoUsuario = Usuario(
-                          numRegistro: usuario.numRegistro,
-                          cpf: usuario.cpf,
-                          rg: usuario.rg,
-                          nome: usuario.nome,
-                          senha: usuario.senha,
-                          dataNascimento: usuario.dataNascimento,
-                        );
-                        FirebaseUtils.salvarUsuario(novoUsuario);
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (_) => HomeScreen()),
-                          (route) => false,
-                        );
-                        // if (pet != null) {
-                        //   service.editPet(pet.id, newPet);
-                        // } else {
-                        //   service.addPet(newPet);
-                        // }
-                        // _usuariosRef.push().set(novoUsuario.toMap());
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            action: SnackBarAction(
-                              label: 'OK',
-                              onPressed: () {
-                                // Code to execute.
-                              },
-                            ),
-                            content: Text('Salvo com Sucesso'),
-                            duration: const Duration(milliseconds: 3000),
-                            width: 280.0,
-                            // Width of the SnackBar.
-                            padding: const EdgeInsets.symmetric(
-                              horizontal:
-                                  8.0, // Inner padding for SnackBar content.
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      final novoRevendedor = Revendedor(
+                        numRegistro: _reseller.numRegistro,
+                        cpf: _reseller.cpf,
+                        rg: _reseller.rg,
+                        nome: _reseller.nome,
+                        senha: _reseller.senha,
+                        dataNascimento: _reseller.dataNascimento,
+                      );
+                      FirestoreService.saveReseller(widget.adminId, novoRevendedor);
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => HomeScreen(adminId: widget.adminId)),
+                            (route) => false,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          action: SnackBarAction(
+                            label: 'OK',
+                            onPressed: () {},
                           ),
-                        );
-                      }
-                      ;
-                    },
-                    child: Text("SALVAR"))
+                          content: Text('Salvo com Sucesso'),
+                          duration: const Duration(milliseconds: 3000),
+                          width: 280.0,
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text('SALVAR'),
+                ),
               ],
             ),
           ),
@@ -214,7 +186,6 @@ class CadastroHome extends StatelessWidget {
       return 'Campo obrigatório';
     }
 
-    // Validação específica para cada campo
     if (fieldName == 'NumRegistro') {
       if (int.tryParse(value) == null) {
         return 'Número de registro inválido';
@@ -242,6 +213,6 @@ class CadastroHome extends StatelessWidget {
       // Adicione aqui as suas regras de validação específicas para a data de nascimento
     }
 
-    return null; // A validação passou
+    return null;
   }
 }

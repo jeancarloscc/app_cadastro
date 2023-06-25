@@ -1,10 +1,14 @@
+import 'package:app_cadastro/services/FirebaseDatabaseService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'form_usuario.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final String adminId;
+
+  const HomeScreen({Key? key, required this.adminId}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -15,17 +19,47 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void initState() {
     super.initState();
-    fetchUsersData();
+    getAdminId();
+    fetchResellersData();
   }
 
-  void fetchUsersData() async {
-    QuerySnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('usuarios').get();
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  void getAdminId() {
+    User? user = auth.currentUser;
+    if (user != null) {
+      String adminId = user.uid;
+      print('Admin ID: $adminId');
+    } else {
+      print('Usuário não autenticado');
+    }
+  }
+
+  Future<void> fetchResellersData() async {
+    String adminId = widget.adminId;
+
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('admins')
+        .doc(adminId)
+        .collection('resellers')
+        .get();
     if (snapshot.size > 0) {
       setState(() {
-        usersData = snapshot.docs.map((doc) => doc.data()).toList();
+        usersData = snapshot.docs.map((doc) {
+          Map<String, dynamic> userData = doc.data();
+          userData['id'] = doc.id; // Adiciona o campo 'id' ao mapa userData
+          return userData;
+        }).toList();
       });
     }
+  }
+
+  void deleteReseller(String resellerId) async {
+    await FirestoreService.deleteReseller(widget.adminId, resellerId);
+    setState(() {
+      usersData.removeWhere((user) => user['id'] == resellerId);
+    });
   }
 
   final TextEditingController _searchController = TextEditingController();
@@ -34,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro"),
+        title: Text("Lista de Revendedores"),
       ),
       body: Column(
         children: [
@@ -50,7 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               onChanged: (value) {
-                // filterPets(value);
+                // Implemente a função filterResellers para filtrar a lista de revendedores
+                // de acordo com o valor digitado no TextField de pesquisa.
               },
             ),
           ),
@@ -73,40 +108,37 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                'Nome: ${userData['nome']}',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                              'Nome: ${userData['nome']}',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                             SizedBox(height: 4.0),
-                            Text('Registro: ${userData['num_registro']}'),
+                            Text('Registro: ${userData['numRegistro']}'),
                             SizedBox(height: 4.0),
                             Text('Senha: ${userData['senha']}'),
                           ],
                         ),
-                        //   trailing: Row(
-                        //     mainAxisSize: MainAxisSize.min,
-                        //     children: [
-                        //       // SizedBox(height: 90,),
-                        //       IconButton(
-                        //         icon: Icon(Icons.edit),
-                        //         onPressed: () {},
-                        //       ),
-                        //       IconButton(
-                        //         icon: Icon(Icons.delete),
-                        //         onPressed: () {},
-                        //       ),
-                        //     ],
-                        // ),
                       ),
                       ButtonBar(
                         children: <Widget>[
-                          ElevatedButton(
+                          OutlinedButton(
                             child: Text('Editar'),
-                            onPressed: () {},
-
+                            onPressed: () {
+                              // Implemente a lógica para editar o revendedor
+                            },
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Color(0xFFFCF1F3))),
                           ),
                           FilledButton(
                             child: Text('Excluir'),
-                            onPressed: () {
-
+                            onPressed: () async {
+                              // userData['id'];
+                              // print("ID Revendedor: ${userData['id']}");
+                              // await FirestoreService.deleteReseller(
+                              //     widget.adminId, userData['id']);
+                              // await fetchResellersData();
+                              deleteReseller(userData['id']);
                             },
                           ),
                         ],
@@ -122,8 +154,9 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (_) => CadastroHome())
+            MaterialPageRoute(
+              builder: (_) => CadastroReseller(adminId: widget.adminId),
+            ),
           );
         },
         child: Icon(Icons.add),
