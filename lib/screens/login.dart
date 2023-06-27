@@ -2,6 +2,7 @@ import 'package:app_cadastro/screens/home.dart';
 import 'package:flutter/material.dart';
 
 import '../services/login.dart';
+import 'cadastroAdmin.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -72,13 +73,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 150,),
+                  SizedBox(height: 100,),
                   FilledButton(
                     onPressed: () {
                       botaoEnviarClicado();
                     },
                     child: Text("ENTRAR"),
                   ),
+                  OutlinedButton(onPressed: (){
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => CadastroAdmin(),
+                      ),
+                    );
+                  },
+                      child: Text("CADASTRO"))
                 ],
               ),
             ),
@@ -100,10 +109,10 @@ class _LoginScreenState extends State<LoginScreen> {
           // Login bem-sucedido
           // Navegar para a próxima tela ou realizar outras ações necessárias
           String adminId = user.uid;
-          print("ID Admin $adminId");
           Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (_) => HomeScreen(adminId: adminId,))
+            MaterialPageRoute(
+              builder: (_) => HomeScreen(adminId: adminId),
+            ),
           );
         } else {
           // Login falhou
@@ -118,10 +127,8 @@ class _LoginScreenState extends State<LoginScreen> {
               content: Text('Usuário ou senha inválida'),
               duration: const Duration(milliseconds: 3000),
               width: 280.0,
-              // Width of the SnackBar.
               padding: const EdgeInsets.symmetric(
-                horizontal:
-                8.0, // Inner padding for SnackBar content.
+                horizontal: 8.0,
               ),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -129,16 +136,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           );
-        }
-      } else {
-        // Chamar o método de criação de usuário do AuthService
-        final user = await _authService.createUserWithEmailAndPassword(email, senha);
-        if (user != null) {
-          // Criação de usuário bem-sucedida
-          // Navegar para a próxima tela ou realizar outras ações necessárias
-        } else {
-          // Criação de usuário falhou
-          // Exibir uma mensagem de erro ao usuário, se necessário
         }
       }
     }

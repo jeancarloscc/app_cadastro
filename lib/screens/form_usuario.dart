@@ -137,7 +137,7 @@ class _CadastroResellerState extends State<CadastroReseller> {
                   ),
                 ),
                 SizedBox(height: 10),
-                ElevatedButton(
+                FilledButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       final novoRevendedor = Revendedor(

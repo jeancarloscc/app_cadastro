@@ -76,4 +76,24 @@ class FirestoreService {
       throw error;
     }
   }
+
+  //Cadastro de novo usuário, mas aqui apenas salva o nome do admin
+  static Future<void> saveAdminName(String adminId, String nome) async {
+    await FirebaseFirestore.instance
+        .collection('admins')
+        .doc(adminId)
+        .set({'nome': nome}, SetOptions(merge: true));
+  }
+
+  // Verificar a existência de um e-mail cadastrado
+  static Future<bool> isEmailAlreadyRegistered(String email) async {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+        .collection('admins')
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+    return snapshot.size > 0;
+  }
+
 }
