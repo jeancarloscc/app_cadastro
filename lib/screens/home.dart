@@ -205,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (_) => InformacaoRevendedor(userData: userData,)));
                   },
                   child: Card(
-                    elevation: 4.0,
+                    elevation: 1,
                     margin: const EdgeInsets.symmetric(
                         vertical: 8.0, horizontal: 16.0),
                     child: Column(

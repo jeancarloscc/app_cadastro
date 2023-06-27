@@ -22,6 +22,14 @@ class _CadastroResellerState extends State<CadastroReseller> {
   late Revendedor _reseller;
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    _cpfController.dispose();
+    _dataNascimentoController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _reseller = Revendedor();

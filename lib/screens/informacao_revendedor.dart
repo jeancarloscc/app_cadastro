@@ -29,7 +29,7 @@ class InformacaoRevendedor extends StatelessWidget {
               SizedBox(height: 8),
               Card(
                 elevation: 0,
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Color(0xFFEBE0E2),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
