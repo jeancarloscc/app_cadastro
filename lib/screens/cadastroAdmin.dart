@@ -136,9 +136,26 @@ class _CadastroAdminState extends State<CadastroAdmin> {
       if (user != null) {
         String adminId = user.uid;
         FirestoreService.saveAdminName(adminId, nome);
-        Navigator.of(context).push(
+        Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (_) => HomeScreen(adminId: adminId),
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            action: SnackBarAction(
+              label: 'OK',
+              onPressed: () {},
+            ),
+            content: Text('Cadastrado com Sucesso!\n'
+                'Seja Bem-Vindo!'),
+            duration: const Duration(milliseconds: 5000),
+            width: 280.0,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
           ),
         );
       } else {

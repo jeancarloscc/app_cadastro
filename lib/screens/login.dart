@@ -109,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Login bem-sucedido
           // Navegar para a próxima tela ou realizar outras ações necessárias
           String adminId = user.uid;
-          Navigator.of(context).push(
+          Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (_) => HomeScreen(adminId: adminId),
             ),

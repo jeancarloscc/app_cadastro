@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jeancc.cadastro.app_cadastro">
    <application
-        android:label="Diario da Erinalda"
+        android:label="MinhaRevendedora"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
